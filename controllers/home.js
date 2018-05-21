@@ -7,9 +7,3 @@ exports.index = (req, res) => {
     title: 'Home'
   });
 };
-
-exports.escapeVelocity=(req,res)=>{
-  res.render('escape-velocity',{
-    title:'Landing Page'
-  });
-}

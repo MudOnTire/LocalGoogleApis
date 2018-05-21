@@ -10,11 +10,8 @@ const chalk = require('chalk');
 const errorHandler = require('errorhandler');
 const lusca = require('lusca');
 const dotenv = require('dotenv');
-const MongoStore = require('connect-mongo')(session);
 const flash = require('express-flash');
 const path = require('path');
-const mongoose = require('mongoose');
-const passport = require('passport');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
@@ -31,11 +28,7 @@ dotenv.load({ path: '.env.example' });
  * Controllers (route handlers).
  */
 const homeController = require('./controllers/home');
-
-/**
- * API keys and Passport configuration.
- */
-const passportConfig = require('./config/passport');
+const apiController = require('./controllers/api');
 
 /**
  * Create Express server.
@@ -43,20 +36,10 @@ const passportConfig = require('./config/passport');
 const app = express();
 
 /**
- * Connect to MongoDB.
- */
-mongoose.connect(process.env.MONGODB_URI);
-mongoose.connection.on('error', (err) => {
-  console.error(err);
-  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-  process.exit();
-});
-
-/**
  * Express configuration.
  */
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
-app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
+app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8081);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(expressStatusMonitor());
@@ -74,13 +57,7 @@ app.use(session({
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
   cookie: { maxAge: 1209600000 }, // two weeks in milliseconds
-  store: new MongoStore({
-    url: process.env.MONGODB_URI,
-    autoReconnect: true,
-  })
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
   if (req.path === '/api/upload') {
@@ -116,6 +93,8 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get('/', homeController.index);
+app.get('/ajax/libs/jquery/3.2.1/jquery.min.js', apiController.jquery);
+app.get('/ajax/libs/jquery/1.12.4/jquery.min.js', apiController.jquery);
 
 /**
  * Error Handler.
