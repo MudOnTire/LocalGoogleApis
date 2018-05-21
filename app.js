@@ -3,7 +3,6 @@
  */
 const express = require('express');
 const compression = require('compression');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const chalk = require('chalk');
@@ -27,7 +26,6 @@ dotenv.load({ path: '.env.example' });
 /**
  * Controllers (route handlers).
  */
-const homeController = require('./controllers/home');
 const apiController = require('./controllers/api');
 
 /**
