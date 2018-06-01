@@ -30,7 +30,7 @@ const app = express();
  * Express configuration.
  */
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
-app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8081);
+app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8888);
 app.use(expressStatusMonitor());
 app.use(compression());
 app.use(bodyParser.json());
